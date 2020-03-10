@@ -51,9 +51,10 @@ if __name__ == "__main__":
     dim_act = env.action_space.flat_dim
     reward = env.rew_matrix
     transition = env.transition_matrix
+    softmax_bool = False
 
     # in the tabular environment the true state-action visitation frequency works as expert demonstration
-    true_q,true_v = q_iteration(env, K=150, ent_wt=ent_wt, gamma=discount)
+    true_q,true_v = q_iteration(env, K=150, ent_wt=ent_wt, gamma=discount, softmax_bool=softmax_bool)
     true_sa_visits = compute_visitation(env, true_q, ent_wt=ent_wt, T=5, discount=discount)
 
     # Computing V_irl (state-only depencency) and V_irl_sa (state-action dependency) using the direct method
@@ -61,3 +62,5 @@ if __name__ == "__main__":
     V_irl = direct_method(env,ent_wt,true_sa_visits,discount,dim_obs,reward,transition,state_only=True)
     V_irl_sa = direct_method(env,ent_wt,true_sa_visits,discount,dim_obs,reward,transition,state_only=False)
     V_star = value_iteration(dim_obs,reward,discount,transition)
+
+    print("e")

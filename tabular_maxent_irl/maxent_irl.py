@@ -81,7 +81,7 @@ def tabular_maxent_irl(env, demo_visitations, num_itrs=50, ent_wt=1.0, lr=1e-3, 
     for it in TrainingIterator(num_itrs, heartbeat=1.0):
         q_itrs = 20 if it.itr>5 else 100
         ### compute policy in closed form
-        q_rew,v_rew = q_iteration(env, reward_matrix=reward_fn, ent_wt=ent_wt, warmstart_q=q_rew, K=q_itrs, gamma=discount)
+        q_rew,v_rew = q_iteration(env, reward_matrix=reward_fn, ent_wt=ent_wt, warmstart_q=q_rew, K=q_itrs, gamma=discount, softmax_bool=True)
 
         ### update reward
         # need to count how often the policy will visit a particular (s, a) pair
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     obs_matrix = np.random.randn(dS, dO)
 
     # Compute optimal policy for double checking
-    true_q,true_v = q_iteration(env, K=150, ent_wt=ent_wt, gamma=discount)
+    true_q,true_v = q_iteration(env, K=150, ent_wt=ent_wt, gamma=discount, softmax_bool=True)
     true_sa_visits = compute_visitation(env, true_q, ent_wt=ent_wt, T=5, discount=discount)
     expert_pol = get_policy(true_q, ent_wt=ent_wt)
 

@@ -26,7 +26,7 @@ def get_policy(q_fn, ent_wt=1.0):
     assert np.all(np.isclose(np.sum(pol_probs, axis=1), 1.0)), str(pol_probs)
     return pol_probs
 
-def q_iteration(env, reward_matrix=None, K=50, gamma=0.99, ent_wt=0.1, warmstart_q=None, policy=None):
+def q_iteration(env, reward_matrix=None, K=50, gamma=0.99, ent_wt=0.1, warmstart_q=None, policy=None, softmax_bool=False):
     """
     Perform tabular soft Q-iteration
 
@@ -44,7 +44,10 @@ def q_iteration(env, reward_matrix=None, K=50, gamma=0.99, ent_wt=0.1, warmstart
     t_matrix = env.transition_matrix
     for k in range(K):
         if policy is None:
-            v_fn = logsumexp(q_fn, alpha=ent_wt)
+            if softmax_bool:
+                v_fn = logsumexp(q_fn, alpha=ent_wt)
+            else:
+                v_fn = np.max(q_fn, axis=1)
         else:
             v_fn = np.sum((q_fn - np.log(policy))*policy, axis=1)
         new_q = reward_matrix + gamma*t_matrix.dot(v_fn)
